@@ -6,11 +6,15 @@ const User = require("../api/user.dao");
 const dummyUser = {
   email: "dummyUser@mail.com",
   password: 1,
+  hp: "0812345678",
+  rating: 5,
+  quota: 2,
+  status: false,
 };
 
 describe("Checking documents", () => {
   before((done) => {
-    mongoose.connect("mongodb://localhost/testDatabase", {
+    mongoose.connect("mongodb://localhost/userServiceTestDB", {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -19,7 +23,7 @@ describe("Checking documents", () => {
     const db = mongoose.connection;
     db.on("error", console.error.bind(console, "connection error"));
     db.once("open", () => {
-      console.log("We are connected to test database!");
+      console.log("We are connected to userServiceTestDB!");
       done();
     });
   });
@@ -32,7 +36,7 @@ describe("Checking documents", () => {
     });
   });
 
-  it("Validation Error : user must be unique", (done) => {
+  it("Validation Error : email must be unique", (done) => {
     const newUser = new User(dummyUser);
     newUser.save((err) => {
       if (err.code === 11000) {
@@ -41,8 +45,14 @@ describe("Checking documents", () => {
     });
   });
 
-  it("Validation Error : user must be filled", (done) => {
-    const newUser = new User({ password: 1 });
+  it("Validation Error : email must be filled", (done) => {
+    const newUser = new User({
+      password: 1,
+      hp: "0812345678",
+      rating: 5,
+      quota: 2,
+      status: false,
+    });
     newUser.save((err) => {
       if (err.errors.email.properties.message === "Email is required") {
         return done();
@@ -50,8 +60,32 @@ describe("Checking documents", () => {
     });
   });
 
+  it("Validation Error : email format must be valid", (done) => {
+    const newUser = new User({
+      email: "dummyUser",
+      password: 1,
+      hp: "0812345678",
+      rating: 5,
+      quota: 2,
+      status: false,
+    });
+    newUser.save((err) => {
+      if (
+        err.errors.email.properties.message === "dummyUser is not a valid email"
+      ) {
+        return done();
+      }
+    });
+  });
+
   it("Validation Error : password must be filled", (done) => {
-    const newUser = new User({ email: "dummyUser@mail.com" });
+    const newUser = new User({
+      email: "dummyUser@mail.com",
+      hp: "0812345678",
+      rating: 5,
+      quota: 2,
+      status: false,
+    });
     newUser.save((err) => {
       if (err.errors.password.properties.message === "Password is required") {
         return done();

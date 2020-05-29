@@ -1,8 +1,17 @@
 const Users = require("./user.dao");
+const { decryptPass } = require("../helpers/bcrypt");
+const { generateToken } = require("../helpers/jwt");
 
 exports.create = (req, res, next) => {
-  const { email, password } = req.body;
-  const newUser = { email, password };
+  const { email, password, hp, rating, quota, status } = req.body;
+  const newUser = {
+    email,
+    password,
+    hp,
+    rating,
+    quota,
+    status: Boolean(status),
+  };
 
   Users.create(newUser, (err, user) => {
     if (err) {
@@ -20,6 +29,7 @@ exports.create = (req, res, next) => {
 };
 
 exports.findAll = (req, res, next) => {
+  console.log("ker findAll");
   Users.get({}, (err, users) => {
     if (err) {
       return next(err);
@@ -34,7 +44,8 @@ exports.findAll = (req, res, next) => {
 };
 
 exports.findOne = (req, res, next) => {
-  Users.get({ email: req.params.email }, (err, user) => {
+  console.log("ke findOne");
+  Users.getByName({ email: req.params.email }, (err, user) => {
     if (err) {
       return next(err);
     } else {
@@ -56,8 +67,15 @@ exports.findOne = (req, res, next) => {
 };
 
 exports.put = (req, res, next) => {
-  const { email, password } = req.body;
-  const updateUser = { email, password };
+  const { email, password, hp, rating, quota, status } = req.body;
+  const updateUser = {
+    email,
+    password,
+    hp,
+    rating,
+    quota,
+    status: Boolean(status),
+  };
 
   Users.update({ _id: req.params.id }, updateUser, (err, user) => {
     // Users.updateOne({ _id: req.params.id }, updateUser, (err, user) => {
@@ -99,6 +117,28 @@ exports.delete = (req, res, next) => {
       //     message: "User deleted successfully",
       //   });
       // }
+    }
+  });
+};
+
+exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  const payload = { email, password };
+  Users.getByName({ email: payload.email }, (err, [found]) => {
+    if (found) {
+      let compare = decryptPass(payload.password, found.password);
+      if (compare) {
+        let { _id, email } = found;
+        let foundPayload = { _id, email };
+        let token = generateToken(foundPayload);
+        return res.status(200).json({
+          access_token: token,
+        });
+      } else {
+        return next({ code: 400, message: "Invalid Username / Password" });
+      }
+    } else {
+      return next({ code: 404, message: "User not found" });
     }
   });
 };
