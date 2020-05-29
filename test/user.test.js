@@ -32,14 +32,32 @@ describe("Checking documents", () => {
     });
   });
 
-  // validation error : user must be unique
-  // it("creates a user", (done) => {
-  //   const newUser = new User(dummyUser);
-  //   newUser.save().then(() => {
-  //     assert(!newUser.isNew);
-  //     done();
-  //   });
-  // });
+  it("Validation Error : user must be unique", (done) => {
+    const newUser = new User(dummyUser);
+    newUser.save((err) => {
+      if (err.code === 11000) {
+        return done();
+      }
+    });
+  });
+
+  it("Validation Error : user must be filled", (done) => {
+    const newUser = new User({ password: 1 });
+    newUser.save((err) => {
+      if (err.errors.email.properties.message === "Email is required") {
+        return done();
+      }
+    });
+  });
+
+  it("Validation Error : password must be filled", (done) => {
+    const newUser = new User({ email: "dummyUser@mail.com" });
+    newUser.save((err) => {
+      if (err.errors.password.properties.message === "Password is required") {
+        return done();
+      }
+    });
+  });
 
   it("finds all user", (done) => {
     User.find().then(() => {
@@ -113,7 +131,7 @@ describe("Checking documents", () => {
   // });
 
   it("removes multiple users", (done) => {
-    User.remove()
+    User.deleteMany()
       .then(() => User.findOne({ email: "dummyUser@mail.com" }))
       .then((user) => {
         assert(user === null);
@@ -122,7 +140,7 @@ describe("Checking documents", () => {
   });
 
   it("removes a user", (done) => {
-    User.findOneAndRemove({ email: "dummyUser@mail.com" })
+    User.findOneAndDelete({ email: "dummyUser@mail.com" })
       .then(() => User.findOne({ email: "dummyUser@mail.com" }))
       .then((user) => {
         assert(user === null);
@@ -131,7 +149,7 @@ describe("Checking documents", () => {
   });
 
   it("removes a user using id", (done) => {
-    User.findByIdAndRemove(dummyUser._id)
+    User.findByIdAndDelete(dummyUser._id)
       .then(() => User.findOne({ email: "dummyUser@mail.com" }))
       .then((user) => {
         assert(user === null);
