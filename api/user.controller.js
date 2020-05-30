@@ -29,7 +29,6 @@ exports.create = (req, res, next) => {
 };
 
 exports.findAll = (req, res, next) => {
-  console.log("ker findAll");
   Users.get({}, (err, users) => {
     if (err) {
       return next(err);
@@ -44,7 +43,6 @@ exports.findAll = (req, res, next) => {
 };
 
 exports.findOne = (req, res, next) => {
-  console.log("ke findOne");
   Users.getByName({ email: req.params.email }, (err, user) => {
     if (err) {
       return next(err);
