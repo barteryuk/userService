@@ -24,6 +24,16 @@ function errorHandler(err, req, res, next) {
           status: 400,
           message: `Database Validation: ${err.errors.email.properties.message}`,
         });
+      } else if (err.errors.password) {
+        return res.status(400).json({
+          status: 400,
+          message: `Database Validation: ${err.errors.password.properties.message}`,
+        });
+      } else if (err.errors.hp) {
+        return res.status(400).json({
+          status: 400,
+          message: `Database Validation: ${err.errors.hp.properties.message}`,
+        });
       } else {
         return res.status(500).json({
           status: 500,
