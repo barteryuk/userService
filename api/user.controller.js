@@ -130,6 +130,8 @@ exports.login = (req, res, next) => {
         let foundPayload = { _id, email };
         let token = generateToken(foundPayload);
         return res.status(200).json({
+          email: foundPayload.email,
+          userId: _id,
           access_token: token,
         });
       } else {
