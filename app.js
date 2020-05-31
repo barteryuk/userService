@@ -8,8 +8,10 @@ const router = require("./routes");
 const errorHandler = require("./middlewares/errorhandler");
 
 const app = express();
+const job = require("./helpers/cron");
 
 db();
+job;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
