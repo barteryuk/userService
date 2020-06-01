@@ -11,7 +11,7 @@ const app = express();
 const job = require("./helpers/cron");
 
 db();
-job;
+// job;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

@@ -43,6 +43,7 @@ exports.findAll = (req, res, next) => {
 };
 
 exports.findOne = (req, res, next) => {
+  // Users.getByName({ email: req.params.email }, (err, user) => {
   Users.getByName({ email: req.params.email }, (err, user) => {
     if (err) {
       return next(err);
