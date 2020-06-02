@@ -1,7 +1,7 @@
 const Users = require("./user.dao");
 const { decryptPass } = require("../helpers/bcrypt");
 const { generateToken } = require("../helpers/jwt");
-const {ObjectId} = require("mongoose").Types;
+const { ObjectId } = require("mongoose").Types;
 
 exports.create = (req, res, next) => {
   const { email, password, hp, rating, quota, status } = req.body;
@@ -44,6 +44,7 @@ exports.findAll = (req, res, next) => {
 };
 
 exports.findOne = (req, res, next) => {
+  console.log(req.params);
   // Users.getByName({ email: req.params.email }, (err, user) => {
   Users.getByName({ email: req.params.email }, (err, user) => {
     if (err) {
@@ -66,8 +67,8 @@ exports.findOne = (req, res, next) => {
   });
 };
 
-
 exports.findById = (req, res, next) => {
+  console.log("malah masuk sini", req.params.id);
   // Users.getByName({ email: req.params.email }, (err, user) => {
   Users.getById({ _id: ObjectId(req.params.id) }, (err, user) => {
     if (err) {
@@ -89,7 +90,6 @@ exports.findById = (req, res, next) => {
     }
   });
 };
-
 
 exports.put = (req, res, next) => {
   const { email, password, hp, rating, quota, status } = req.body;
