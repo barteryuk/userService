@@ -1,6 +1,7 @@
 const Users = require("./user.dao");
 const { decryptPass } = require("../helpers/bcrypt");
 const { generateToken } = require("../helpers/jwt");
+const {ObjectId} = require("mongoose").Types;
 
 exports.create = (req, res, next) => {
   const { email, password, hp, rating, quota, status } = req.body;
@@ -64,6 +65,31 @@ exports.findOne = (req, res, next) => {
     }
   });
 };
+
+
+exports.findById = (req, res, next) => {
+  // Users.getByName({ email: req.params.email }, (err, user) => {
+  Users.getById({ _id: ObjectId(req.params.id) }, (err, user) => {
+    if (err) {
+      return next(err);
+    } else {
+      return res.status(200).json(user);
+
+      // if (user.length === 0) {
+      //   return res.status(404).json({
+      //     user,
+      //     message: "User not found",
+      //   });
+      // } else {
+      //   return res.status(200).json({
+      //     user,
+      //     message: "User found",
+      //   });
+      // }
+    }
+  });
+};
+
 
 exports.put = (req, res, next) => {
   const { email, password, hp, rating, quota, status } = req.body;
