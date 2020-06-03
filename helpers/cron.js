@@ -35,6 +35,11 @@ const job = new CronJob(
   "Asia/Jakarta"
 );
 
-job.start();
+function jobStart() {
+  job.start();
+}
+function jobStop() {
+  job.stop();
+}
 
-module.export = job;
+module.exports = { jobStart, jobStop };
